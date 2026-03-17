@@ -1,0 +1,117 @@
+:root {
+  --bg-color: hsl(0, 0%, 95%);
+  /* background off-white */
+  --text-color: hsl(0, 0%, 5%);
+  /* text very dark gray */
+  --font-heading: 'Inter', sans-serif;
+  --font-body: 'Arial', sans-serif;
+
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-15: 60px;
+  --spacing-20: 80px;
+
+  --color-unlearned: hsl(0, 0%, 95%);
+  --color-learning: hsl(120, 60%, 80%);
+  --color-learned: hsl(60, 80%, 75%);
+  --color-hover: hsl(240, 100%, 50%);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  max-width: 1000px;
+  margin: 0 auto;
+  /* center body */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+}
+
+header {
+  padding: var(--spacing-8) var(--spacing-4);
+  text-align: left;
+}
+
+header h1 {
+  font-size: var(--spacing-10);
+  font-weight: 700;
+}
+
+main {
+  flex: 1;
+  padding: 0 var(--spacing-4) var(--spacing-8) var(--spacing-4);
+}
+
+.instruction-text {
+  font-size: var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+  text-align: left;
+}
+
+.character-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, var(--spacing-10));
+  gap: var(--spacing-1);
+  /* small padding between boxes */
+  justify-content: flex-start;
+  /* left-aligned grid items */
+}
+
+.char-box {
+  width: var(--spacing-10);
+  height: var(--spacing-10);
+  border: 2px solid var(--text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--spacing-6);
+  /* padding between character and box implicit in size */
+  background-color: var(--color-unlearned);
+  /* white by default */
+  color: var(--text-color);
+  /* black character */
+  cursor: pointer;
+}
+
+.char-box:hover {
+  border-color: var(--color-hover);
+  /* no transition time */
+}
+
+.status-learning {
+  background-color: var(--color-learning);
+}
+
+.status-learned {
+  background-color: var(--color-learned);
+}
+
+footer {
+  padding: var(--spacing-8) var(--spacing-4);
+  text-align: left;
+  font-size: var(--spacing-3);
+  margin-top: auto;
+}
