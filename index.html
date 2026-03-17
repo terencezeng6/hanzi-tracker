@@ -14,10 +14,22 @@
 
 <body>
   <header>
-    <h1>Hanzi Tracker</h1>
+    <h1>Chinese Character Tracker</h1>
   </header>
   <main>
-    <p class="instruction-text">Click on a character to change its status!</p>
+    <div class="top-section">
+      <p class="instruction-text">Click on a character to change its status!</p>
+      <div class="legend">
+        <div class="legend-row">
+          <div class="legend-box status-learning"></div>
+          <span>Learned: <span id="learned-count">0</span></span>
+        </div>
+        <div class="legend-row">
+          <div class="legend-box status-learned"></div>
+          <span>In Progress: <span id="in-progress-count">0</span></span>
+        </div>
+      </div>
+    </div>
     <div id="character-grid" class="character-grid">
     </div>
   </main>

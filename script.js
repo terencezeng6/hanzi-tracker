@@ -53,12 +53,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // save state
       saveState(savedState);
+      updateCounts(savedState);
     });
 
     fragment.appendChild(box);
   });
 
   gridContainer.appendChild(fragment);
+  updateCounts(savedState);
 });
 
 function saveState(stateObj) {
@@ -67,4 +69,15 @@ function saveState(stateObj) {
   } catch (e) {
     console.error('Failed to save to localStorage', e);
   }
+}
+
+function updateCounts(savedState) {
+  let learnedCount = 0;
+  let inProgressCount = 0;
+  for (const char in savedState) {
+    if (savedState[char] === 1) learnedCount++;
+    else if (savedState[char] === 2) inProgressCount++;
+  }
+  document.getElementById('learned-count').textContent = learnedCount;
+  document.getElementById('in-progress-count').textContent = inProgressCount;
 }

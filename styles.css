@@ -18,7 +18,7 @@
   --spacing-20: 80px;
 
   --color-unlearned: hsl(0, 0%, 95%);
-  --color-learning: hsl(120, 60%, 80%);
+  --color-learning: hsl(120, 60%, 75%);
   --color-learned: hsl(60, 80%, 75%);
   --color-hover: hsl(240, 100%, 50%);
 }
@@ -65,11 +65,45 @@ main {
   padding: 0 var(--spacing-4) var(--spacing-8) var(--spacing-4);
 }
 
+.top-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: var(--spacing-4);
+}
+
 .instruction-text {
   font-size: var(--spacing-4);
-  margin-bottom: var(--spacing-4);
   text-align: left;
 }
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--spacing-4);
+}
+
+.legend-box {
+  width: var(--spacing-5);
+  height: var(--spacing-5);
+  border: 2px solid var(--text-color);
+}
+
+@media (max-width: 600px) {
+  .top-section {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: var(--spacing-4);
+  }
+}
+
 
 .character-grid {
   display: grid;
