@@ -47,5 +47,5 @@ print(characters)
 
 with open("characters.js", "w", encoding="utf-8") as f:
   f.write("const characters = ")
-  json.dump(characters, f, ensure_ascii=False)
+  json.dump([char for char, rank in characters], f, ensure_ascii=False)
   f.write(";")
