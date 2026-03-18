@@ -52,12 +52,46 @@ h6 {
 
 header {
   padding: var(--spacing-8) var(--spacing-4) var(--spacing-4) var(--spacing-4);
-  text-align: left;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 header h1 {
   font-size: var(--spacing-10);
   font-weight: 700;
+  text-align: left;
+}
+
+#auth-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+#user-profile {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  font-weight: 600;
+}
+
+#logout-btn {
+  padding: var(--spacing-2) var(--spacing-4);
+  background-color: transparent;
+  border: 1px solid var(--text-color);
+  color: var(--text-color);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+#logout-btn:hover {
+  background-color: var(--text-color);
+  color: var(--bg-color);
 }
 
 main {

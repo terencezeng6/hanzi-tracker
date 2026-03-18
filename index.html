@@ -14,7 +14,26 @@
 
 <body>
   <header>
-    <h1>Chinese Character Tracker</h1>
+    <div class="header-content">
+      <h1>Chinese Character Tracker</h1>
+      <div id="auth-container">
+        <!-- Google sign in script -->
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+        <div id="g_id_onload" data-client_id="167076485233-f4tn6fidnk2ue8oa38p4ng54bd5dkrnb.apps.googleusercontent.com"
+          data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse" data-auto_prompt="false">
+        </div>
+
+        <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
+          data-text="signin_with" data-size="large" data-logo_alignment="left">
+        </div>
+
+        <div id="user-profile" style="display: none;">
+          <span id="user-name"></span>
+          <button id="logout-btn">Logout</button>
+        </div>
+      </div>
+    </div>
   </header>
   <main>
     <div class="top-section">
