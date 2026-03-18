@@ -131,7 +131,8 @@ main {
   cursor: pointer;
 }
 
-.char-box:hover {
+.char-box:hover,
+.char-box.selected-range {
   border-color: var(--color-hover);
   /* no transition time */
 }

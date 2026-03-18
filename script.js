@@ -21,8 +21,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // create grid items
   const fragment = document.createDocumentFragment();
+  const charBoxes = [];
+  let isDragging = false;
+  let dragStartIndex = -1;
 
-  characters.forEach(char => {
+  function highlightRange(startIdx, endIdx) {
+    charBoxes.forEach(box => box.classList.remove('selected-range'));
+    const start = Math.min(startIdx, endIdx);
+    const end = Math.max(startIdx, endIdx);
+    for (let i = start; i <= end; i++) {
+      charBoxes[i].classList.add('selected-range');
+    }
+  }
+
+  function clearHighlight() {
+    charBoxes.forEach(box => box.classList.remove('selected-range'));
+  }
+
+  document.addEventListener('mouseup', () => {
+    if (isDragging) {
+      isDragging = false;
+      clearHighlight();
+    }
+  });
+
+  characters.forEach((char, index) => {
     const box = document.createElement('div');
     const state = savedState[char] || 0;
 
@@ -33,27 +56,68 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // explicitly set the background to off-white if unlearned, per specs (though CSS handles this via default variable)
     box.textContent = char;
+    charBoxes.push(box);
 
-    box.addEventListener('click', () => {
-      // rotate state: 0 -> 1 -> 2 -> 0
-      let currentState = savedState[char] || 0;
-
-      // remove current state class
-      if (currentState > 0) {
-        box.classList.remove(STATE_CLASSES[currentState]);
+    box.addEventListener('mousedown', (e) => {
+      if (e.shiftKey && e.button === 0) {
+        e.preventDefault(); // prevent text selection
+        isDragging = true;
+        dragStartIndex = index;
+        highlightRange(dragStartIndex, index);
       }
+    });
 
-      let nextState = (currentState + 1) % 3;
-      savedState[char] = nextState;
-
-      // add new state class
-      if (nextState > 0) {
-        box.classList.add(STATE_CLASSES[nextState]);
+    box.addEventListener('mouseenter', (e) => {
+      if (isDragging) {
+        highlightRange(dragStartIndex, index);
       }
+    });
 
-      // save state
-      saveState(savedState);
-      updateCounts(savedState);
+    box.addEventListener('mouseup', (e) => {
+      if (isDragging) {
+        const start = Math.min(dragStartIndex, index);
+        const end = Math.max(dragStartIndex, index);
+        for (let i = start; i <= end; i++) {
+          let c = characters[i];
+          let currentState = savedState[c] || 0;
+          if (currentState > 0) {
+            charBoxes[i].classList.remove(STATE_CLASSES[currentState]);
+          }
+          let nextState = (currentState + 1) % 3;
+          savedState[c] = nextState;
+          if (nextState > 0) {
+            charBoxes[i].classList.add(STATE_CLASSES[nextState]);
+          }
+        }
+        saveState(savedState);
+        updateCounts(savedState);
+        isDragging = false;
+        clearHighlight();
+      }
+    });
+
+    box.addEventListener('click', (e) => {
+      if (!e.shiftKey) {
+        // rotate state: 0 -> 1 -> 2 -> 0
+        let currentState = savedState[char] || 0;
+
+        // remove current state class
+        if (currentState > 0) {
+          box.classList.remove(STATE_CLASSES[currentState]);
+        }
+
+        let nextState = (currentState + 1) % 3;
+        savedState[char] = nextState;
+
+        // add new state class
+        if (nextState > 0) {
+          box.classList.add(STATE_CLASSES[nextState]);
+        }
+
+        // save state
+        saveState(savedState);
+        updateCounts(savedState);
+      }
     });
 
     fragment.appendChild(box);
