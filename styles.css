@@ -79,6 +79,7 @@ header h1 {
   align-items: center;
   gap: var(--spacing-3);
   font-weight: 600;
+  margin: 16px 0 0 0;
 }
 
 #login-btn {
