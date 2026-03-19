@@ -4,7 +4,7 @@
   --text-color: hsl(0, 0%, 5%);
   /* text very dark gray */
   --font-heading: 'Inter', sans-serif;
-  --font-body: 'Arial', sans-serif;
+  --font-body: 'Inter', sans-serif;
 
   --spacing-1: 4px;
   --spacing-2: 8px;
@@ -78,7 +78,7 @@ header h1 {
   display: flex;
   align-items: center;
   gap: var(--spacing-4);
-  font-weight: 600;
+  font-family: var(--font-body);
   margin: 16px 0 0 0;
 }
 
@@ -90,12 +90,10 @@ header h1 {
   margin: 16px 0 0 0;
   background-color: #fff;
   border: 1px solid #dadce0;
-  color: #3c4043;
   border-radius: 4px;
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
   font-size: 14px;
+  font-family: var(--font-body);
   line-height: 1;
   transition: background-color 0.2s;
   white-space: nowrap;
