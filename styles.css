@@ -48,6 +48,7 @@ h4,
 h5,
 h6 {
   font-family: var(--font-heading);
+  margin: 16px 24px 0 0;
 }
 
 header {
@@ -58,6 +59,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 header h1 {
@@ -84,6 +86,7 @@ header h1 {
   align-items: center;
   gap: var(--spacing-2);
   padding: 8px 16px;
+  margin: 16px 0 0 0;
   background-color: #fff;
   border: 1px solid #dadce0;
   color: #3c4043;
