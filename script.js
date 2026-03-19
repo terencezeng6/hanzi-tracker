@@ -1,3 +1,7 @@
+import { auth, provider, db } from './firebase-config.js';
+import { signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
 const STORAGE_KEY = 'hanzi-tracker-data';
 
 // states: 0 = unlearned (default), 1 = learning (green), 2 = learned (yellow)
@@ -9,51 +13,65 @@ const STATE_CLASSES = {
 
 let savedState = {};
 let charBoxesMap = {};
-let authToken = null;
+let currentUser = null;
 
 // Auth handlers
-window.handleCredentialResponse = async (response) => {
-  console.log("Encoded JWT ID token: " + response.credential);
-  try {
-    const res = await fetch('/api/auth/google', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ token: response.credential })
+document.addEventListener('DOMContentLoaded', () => {
+  const loginBtn = document.getElementById('login-btn');
+  const logoutBtn = document.getElementById('logout-btn');
+  const userProfile = document.getElementById('user-profile');
+  const userName = document.getElementById('user-name');
+
+  if (loginBtn) {
+    loginBtn.addEventListener('click', async () => {
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (error) {
+        console.error('Login failed:', error);
+        alert('Login failed: ' + error.message);
+      }
     });
-    
-    if (res.ok) {
-      const data = await res.json();
-      authToken = response.credential;
-      
-      document.querySelector('.g_id_signin').style.display = 'none';
-      document.getElementById('user-profile').style.display = 'flex';
-      document.getElementById('user-name').textContent = data.user.name;
-      
+  }
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error('Logout failed:', error);
+      }
+    });
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      if (loginBtn) loginBtn.style.display = 'none';
+      if (userProfile) userProfile.style.display = 'flex';
+      if (userName) userName.textContent = user.displayName || user.email;
       await fetchUserData();
     } else {
-      const errorData = await res.json();
-      console.error('Login failed:', errorData);
-      alert('Login failed: ' + (errorData.error || 'Unknown error'));
+      currentUser = null;
+      if (loginBtn) loginBtn.style.display = 'inline-flex';
+      if (userProfile) userProfile.style.display = 'none';
+      savedState = {}; // clear state on logout
+      updateCounts();
+      updateUIGrid();
     }
-  } catch (error) {
-    console.error('Error during login:', error);
-    alert('Communication error with the server. Are you running the backend server? Check the console for details.');
-  }
-};
+  });
+
+  // Init grid
+  initGrid();
+});
 
 async function fetchUserData() {
-  if (!authToken) return;
+  if (!currentUser) return;
   try {
-    const res = await fetch('/api/user/data', {
-      headers: { 'Authorization': `Bearer ${authToken}` }
-    });
-    
-    if (res.ok) {
-      const backendData = await res.json();
-      
-      // Reset savedState
+    const docRef = doc(db, "users", currentUser.uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const backendData = docSnap.data();
       savedState = {};
       if (backendData.learned) {
         backendData.learned.forEach(char => savedState[char] = 1);
@@ -61,38 +79,34 @@ async function fetchUserData() {
       if (backendData.in_progress) {
         backendData.in_progress.forEach(char => savedState[char] = 2);
       }
-      
-      updateCounts();
-      updateUIGrid();
-      
-      // Save merged state to local storage just in case
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(savedState));
+    } else {
+      savedState = {};
     }
+
+    updateCounts();
+    updateUIGrid();
+
+    // Save to local storage mapping 
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(savedState));
   } catch (e) {
     console.error('Failed to fetch user data', e);
   }
 }
 
 async function syncStateToBackend() {
-  if (!authToken) return;
-  
+  if (!currentUser) return;
+
   const learned = [];
   const in_progress = [];
-  
+
   for (const char in savedState) {
     if (savedState[char] === 1) learned.push(char);
     else if (savedState[char] === 2) in_progress.push(char);
   }
-  
+
   try {
-    await fetch('/api/user/data', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ learned, in_progress })
-    });
+    const docRef = doc(db, "users", currentUser.uid);
+    await setDoc(docRef, { learned, in_progress }, { merge: true });
   } catch (e) {
     console.error('Failed to sync state to backend', e);
   }
@@ -115,9 +129,8 @@ function saveState() {
   } catch (e) {
     console.error('Failed to save to localStorage', e);
   }
-  
-  // also sync to backend if logged in
-  if (authToken) {
+
+  if (currentUser) {
     syncStateToBackend();
   }
 }
@@ -133,33 +146,9 @@ function updateCounts() {
   document.getElementById('in-progress-count').textContent = inProgressCount;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function initGrid() {
   const gridContainer = document.getElementById('character-grid');
-
-  try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    if (data) Object.assign(savedState, JSON.parse(data));
-  } catch (e) {
-    console.error('Failed to load from localStorage', e);
-  }
-  
-  const logoutBtn = document.getElementById('logout-btn');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
-      authToken = null;
-      document.querySelector('.g_id_signin').style.display = 'block';
-      document.getElementById('user-profile').style.display = 'none';
-      
-      // Clear state when logged out to avoid mixing sessions
-      savedState = {};
-      
-      // Restore from local storage? If we have non-logged in state, it might be overwritten.
-      // Better to just start fresh if we implemented user states.
-      updateCounts();
-      updateUIGrid();
-    });
-  }
-
+  gridContainer.innerHTML = '';
   const fragment = document.createDocumentFragment();
   const charBoxesArray = [];
   let isDragging = false;
@@ -185,81 +174,82 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // `characters` is imported via characters.js
-  characters.forEach((char, index) => {
-    const box = document.createElement('div');
-    const state = savedState[char] || 0;
+  if (typeof window.characters !== 'undefined') {
+    window.characters.forEach((char, index) => {
+      const box = document.createElement('div');
+      const state = savedState[char] || 0;
 
-    box.className = 'char-box';
-    if (state > 0) {
-      box.classList.add(STATE_CLASSES[state]);
-    }
-
-    box.textContent = char;
-    charBoxesArray.push(box);
-    charBoxesMap[char] = box;
-
-    box.addEventListener('mousedown', (e) => {
-      if (e.shiftKey && e.button === 0) {
-        e.preventDefault();
-        isDragging = true;
-        dragStartIndex = index;
-        highlightRange(dragStartIndex, index);
+      box.className = 'char-box';
+      if (state > 0) {
+        box.classList.add(STATE_CLASSES[state]);
       }
-    });
 
-    box.addEventListener('mouseenter', (e) => {
-      if (isDragging) {
-        highlightRange(dragStartIndex, index);
-      }
-    });
+      box.textContent = char;
+      charBoxesArray.push(box);
+      charBoxesMap[char] = box;
 
-    box.addEventListener('mouseup', (e) => {
-      if (isDragging) {
-        const start = Math.min(dragStartIndex, index);
-        const end = Math.max(dragStartIndex, index);
-        for (let i = start; i <= end; i++) {
-          let c = characters[i];
-          let currentState = savedState[c] || 0;
+      box.addEventListener('mousedown', (e) => {
+        if (e.shiftKey && e.button === 0) {
+          e.preventDefault();
+          isDragging = true;
+          dragStartIndex = index;
+          highlightRange(dragStartIndex, index);
+        }
+      });
+
+      box.addEventListener('mouseenter', (e) => {
+        if (isDragging) {
+          highlightRange(dragStartIndex, index);
+        }
+      });
+
+      box.addEventListener('mouseup', (e) => {
+        if (isDragging) {
+          const start = Math.min(dragStartIndex, index);
+          const end = Math.max(dragStartIndex, index);
+          for (let i = start; i <= end; i++) {
+            let c = window.characters[i];
+            let currentState = savedState[c] || 0;
+            if (currentState > 0) {
+              charBoxesArray[i].classList.remove(STATE_CLASSES[currentState]);
+            }
+            let nextState = (currentState + 1) % 3;
+            savedState[c] = nextState;
+            if (nextState > 0) {
+              charBoxesArray[i].classList.add(STATE_CLASSES[nextState]);
+            }
+          }
+          saveState();
+          updateCounts();
+          isDragging = false;
+          clearHighlight();
+        }
+      });
+
+      box.addEventListener('click', (e) => {
+        if (!e.shiftKey) {
+          let currentState = savedState[char] || 0;
+
           if (currentState > 0) {
-            charBoxesArray[i].classList.remove(STATE_CLASSES[currentState]);
+            box.classList.remove(STATE_CLASSES[currentState]);
           }
+
           let nextState = (currentState + 1) % 3;
-          savedState[c] = nextState;
+          savedState[char] = nextState;
+
           if (nextState > 0) {
-            charBoxesArray[i].classList.add(STATE_CLASSES[nextState]);
+            box.classList.add(STATE_CLASSES[nextState]);
           }
+
+          saveState();
+          updateCounts();
         }
-        saveState();
-        updateCounts();
-        isDragging = false;
-        clearHighlight();
-      }
+      });
+
+      fragment.appendChild(box);
     });
 
-    box.addEventListener('click', (e) => {
-      if (!e.shiftKey) {
-        let currentState = savedState[char] || 0;
-
-        if (currentState > 0) {
-          box.classList.remove(STATE_CLASSES[currentState]);
-        }
-
-        let nextState = (currentState + 1) % 3;
-        savedState[char] = nextState;
-
-        if (nextState > 0) {
-          box.classList.add(STATE_CLASSES[nextState]);
-        }
-
-        saveState();
-        updateCounts();
-      }
-    });
-
-    fragment.appendChild(box);
-  });
-
-  gridContainer.appendChild(fragment);
-  updateCounts();
-});
+    gridContainer.appendChild(fragment);
+    updateCounts();
+  }
+}

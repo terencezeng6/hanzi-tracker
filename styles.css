@@ -79,6 +79,36 @@ header h1 {
   font-weight: 600;
 }
 
+#login-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: 8px 16px;
+  background-color: #fff;
+  border: 1px solid #dadce0;
+  color: #3c4043;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+#login-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  display: block;
+}
+
+#login-btn:hover {
+  background-color: #f8f9fa;
+  border-color: #d2e3fc;
+}
+
 #logout-btn {
   padding: var(--spacing-2) var(--spacing-4);
   background-color: transparent;
