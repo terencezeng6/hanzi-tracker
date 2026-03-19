@@ -13,7 +13,31 @@
 </head>
 
 <body>
+  <!-- About Modal -->
+  <div id="about-overlay" class="about-overlay" style="display: none;">
+    <div class="about-modal">
+      <button id="about-close" class="about-close">&times;</button>
+      <h2 class="about-heading">About</h2>
+      <p class="about-body">
+        This is a simple tool I made while I was in China to track the status of characters I'm learning.
+        Users can log in with a Google account to save their data.
+        <br><br>
+        The characters are taken from the government's <a
+          href="https://en.wikipedia.org/wiki/List_of_Commonly_Used_Standard_Chinese_Characters">通用规范汉字表</a> (List of
+        Commonly Used Chinese Characters). They're sorted by frequency, from most common to least common, and the
+        frequency data is taken from <a
+          href="https://lingua.mtsu.edu/chinese-computing/statistics/char/list.php?Which=MO">Jun Da's character
+          frequency list</a>.
+        <br><br>
+        It's pretty barebones right now, but I'm hoping to add more features — let me know if you have suggestions!
+      </p>
+    </div>
+  </div>
+
   <header>
+    <div class="about-btn-container">
+      <button id="about-btn" class="about-btn">About</button>
+    </div>
     <div class="header-content">
       <h1>Chinese Character Tracker</h1>
       <button id="login-btn">

@@ -22,6 +22,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const userProfile = document.getElementById('user-profile');
   const userName = document.getElementById('user-name');
 
+  // About modal
+  const aboutBtn = document.getElementById('about-btn');
+  const aboutOverlay = document.getElementById('about-overlay');
+  const aboutClose = document.getElementById('about-close');
+
+  if (aboutBtn && aboutOverlay) {
+    aboutBtn.addEventListener('click', () => {
+      aboutOverlay.style.display = 'flex';
+      document.body.classList.add('no-scroll');
+    });
+
+    aboutClose.addEventListener('click', () => {
+      aboutOverlay.style.display = 'none';
+      document.body.classList.remove('no-scroll');
+    });
+  }
+
   if (loginBtn) {
     loginBtn.addEventListener('click', async () => {
       try {
