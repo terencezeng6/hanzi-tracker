@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hanzi Tracker</title>
+  <meta name="description" content="A simple website to track learned Chinese characters.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="characters.js"></script>
+  <script type="module" src="script.js"></script>
+  <meta name="google-site-verification" content="291UXFBOH0EyA61wsRb32nV8q1rCAgJV1AyCqban4fs" />
+</head>
+
+<body>
+  <!-- About Modal -->
+  <div id="about-overlay" class="about-overlay" style="display: none;">
+    <div class="about-modal">
+      <button id="about-close" class="about-close">&times;</button>
+      <h2 class="about-heading">About</h2>
+      <p class="about-body">
+        This is a simple tool I made while I was in China to track the status of characters I'm learning.
+        Users can log in with a Google account to save their data.
+        <br><br>
+        The characters are taken from the government's <a
+          href="https://en.wikipedia.org/wiki/List_of_Commonly_Used_Standard_Chinese_Characters">通用规范汉字表</a> (List of
+        Commonly Used Chinese Characters). They're sorted by frequency, from most common to least common, and the
+        frequency data is taken from <a
+          href="https://lingua.mtsu.edu/chinese-computing/statistics/char/list.php?Which=MO">Jun Da's character
+          frequency list</a>.
+        <br><br>
+        It's pretty barebones right now, but I'm hoping to add more features — let me know if you have suggestions!
+      </p>
+    </div>
+  </div>
+
+  <header>
+    <div class="about-btn-container">
+      <button id="about-btn" class="about-btn">About</button>
+    </div>
+    <div class="header-content">
+      <h1>Chinese Character Tracker</h1>
+      <button id="login-btn">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
+          <path fill="#EA4335"
+            d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z">
+          </path>
+          <path fill="#4285F4"
+            d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z">
+          </path>
+          <path fill="#FBBC05"
+            d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z">
+          </path>
+          <path fill="#34A853"
+            d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z">
+          </path>
+          <path fill="none" d="M0 0h48v48H0z"></path>
+        </svg>
+        Sign in with Google
+      </button>
+
+      <div id="user-profile" style="display: none;">
+        <span id="user-name"></span>
+        <button id="logout-btn">Logout</button>
+      </div>
+    </div>
+    </div>
+  </header>
+  <main>
+    <div class="top-section">
+      <p class="instruction-text">Click on a character to change its status! <br> Hold shift and drag to select multiple
+        characters.</p>
+      <div class="legend">
+        <div class="legend-row">
+          <div class="legend-box status-learning"></div>
+          <span>Learned: <span id="learned-count">0</span></span>
+        </div>
+        <div class="legend-row">
+          <div class="legend-box status-learned"></div>
+          <span>In Progress: <span id="in-progress-count">0</span></span>
+        </div>
+      </div>
+    </div>
+    <div id="character-grid" class="character-grid">
+    </div>
+  </main>
+  <footer>
+    <p>Made by Terence Zeng, 2026</p>
+  </footer>
+</body>
+
+</html>
