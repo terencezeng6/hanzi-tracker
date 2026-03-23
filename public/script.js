@@ -77,6 +77,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Frequency rank toggle
+  const freqToggle = document.getElementById('freq-toggle');
+  const gridContainer = document.getElementById('character-grid');
+  if (freqToggle && gridContainer) {
+    freqToggle.addEventListener('click', () => {
+      freqToggle.classList.toggle('checked');
+      gridContainer.classList.toggle('show-ranks');
+    });
+  }
+
   // Init grid
   initGrid();
 });
@@ -201,7 +211,11 @@ function initGrid() {
         box.classList.add(STATE_CLASSES[state]);
       }
 
-      box.textContent = char;
+      const rankSpan = document.createElement('span');
+      rankSpan.className = 'freq-rank';
+      rankSpan.textContent = index + 1;
+      box.appendChild(rankSpan);
+      box.appendChild(document.createTextNode(char));
       charBoxesArray.push(box);
       charBoxesMap[char] = box;
 

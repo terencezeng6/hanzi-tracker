@@ -197,6 +197,43 @@ main {
   color: var(--text-color);
   /* black character */
   cursor: pointer;
+  position: relative;
+}
+
+.freq-rank {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  font-size: 7px;
+  line-height: 1;
+  color: black;
+  pointer-events: none;
+  display: none;
+}
+
+.show-ranks .freq-rank {
+  display: block;
+}
+
+/* Frequency rank checkbox toggle */
+.freq-checkbox {
+  width: var(--spacing-5);
+  height: var(--spacing-5);
+  border: 2px solid var(--text-color);
+  background-color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.freq-checkbox.checked::after {
+  content: '';
+  display: block;
+  width: calc(var(--spacing-5) - 8px);
+  height: calc(var(--spacing-5) - 8px);
+  background-color: var(--text-color);
 }
 
 .char-box:hover,
